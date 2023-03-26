@@ -1,0 +1,108 @@
+{
+  "swagger": "2.0",
+  "paths": {
+    "/upload": {
+      "post": {
+        "description": "This endpoint accepts a multipart/form-data request with a single \"file\" parameter\nthat contains the image file to upload. The maximum allowed file size is 5 MB.",
+        "tags": [
+          "uploadImage"
+        ],
+        "summary": "Uploads an image file to the server.",
+        "operationId": "UploadImageHandler",
+        "parameters": [
+          {
+            "$ref": "#/definitions/FileHeader",
+            "description": "description: The image file to upload",
+            "name": "File",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UploadImageResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "FileHeader": {
+      "type": "object",
+      "title": "A FileHeader describes a file part of a multipart request.",
+      "properties": {
+        "Filename": {
+          "type": "string"
+        },
+        "Header": {
+          "$ref": "#/definitions/MIMEHeader"
+        },
+        "Size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "x-go-package": "mime/multipart"
+    },
+    "MIMEHeader": {
+      "description": "A MIMEHeader represents a MIME-style header mapping\nkeys to sets of values.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "net/textproto"
+    }
+  },
+  "responses": {
+    "BadRequestResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "The error message.",
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "failed to receive image"
+          }
+        }
+      }
+    },
+    "InternalServerErrorResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "The error message.",
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "failed to upload image"
+          }
+        }
+      }
+    },
+    "UploadImageResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "description": "The URL of the uploaded image.",
+            "type": "string",
+            "x-go-name": "URL",
+            "example": "https://example.com/images/image.jpg"
+          }
+        }
+      }
+    }
+  }
+}
