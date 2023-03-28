@@ -8,6 +8,7 @@ To run this application, you need to have Go and Docker installed on your machin
 
 1. Clone this repository: git clone https://github.com/aavani-ammu/ImageUpload.git
 2. Change into the directory: cd ImageUpload
+3. Set your local environment with aws credentials in .env file and set your aws s3 bucket name for image upload in UploadImage function in repository/awsS3.go
 3. Start the application: docker-compose up
 
 ## Usage
