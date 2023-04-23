@@ -5,10 +5,34 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"imageupload/dao"
+	"imageupload/models"
+	"imageupload/repository"
 	"imageupload/service"
 )
 
-// swagger:route POST /upload uploadImage UploadImageHandler
+type ImageHandler struct {
+	ImageService service.ImageService
+}
+
+func NewImageHandler(container *models.Container) *ImageHandler {
+	// Initialize DAOs
+	imageDao := dao.NewImageDao(container.MongoDB)
+
+	s3Service := repository.NewS3Service("bucketforimageupload")
+
+	// Initialize services
+	imageService := service.NewImageService(imageDao, s3Service)
+
+	// Initialize handlers
+	imageHandler := &ImageHandler{
+		ImageService: imageService,
+	}
+
+	return imageHandler
+}
+
+// swagger:route POST /upload PostUploadImage UploadImageHandler
 //
 // Uploads an image file to the server.
 //
@@ -20,7 +44,7 @@ import (
 //   400: BadRequestResponse
 //   500: InternalServerErrorResponse
 
-func UploadImageHandler(c *gin.Context) {
+func (h *ImageHandler) PostUploadImage(c *gin.Context) {
 	//getting the file
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
@@ -44,5 +68,15 @@ func UploadImageHandler(c *gin.Context) {
 		return
 	}
 
-	service.UploadImage(c, file, fileHeader)
+	h.ImageService.UploadImage(c, file, fileHeader)
+}
+
+func (h *ImageHandler) GetListImages(c *gin.Context) {
+	//service.ListImages(c)
+	h.ImageService.ListImages(c)
+}
+
+func (h *ImageHandler) DeleteImage(c *gin.Context) {
+	imageName := c.Param("imageName")
+	h.ImageService.DeleteImage(c, imageName)
 }
