@@ -14,6 +14,10 @@ import (
 
 func main() {
 	//LoadEnv()
+	//check
+	//if
+	//this
+	//comes
 
 	//load env variables
 	err := godotenv.Load()
